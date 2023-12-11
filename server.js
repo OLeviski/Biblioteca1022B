@@ -13,16 +13,42 @@ server.post('/livro', (request, reply) => {
    //console.log(body)//
    const {titulo, autor, npaginas } = request.body
     database.create({
-        titulo: 'livro 1',
-        autor: "autor 1 ",
-        npaginas: 400
+        titulo: titulo,
+        autor: autor,
+        npaginas: npaginas
     })
     console.log(database.list())
     return reply.status(201).send()
 })
 
-server.get('/livro', () => {
-    return 'Ler!'
+server.get('/livro', (request) => {
+    const search = request.query.search
+
+    console.log(search)
+    
+    const livros = database.list(search)
+   
+    return livros
+})
+
+server.put('/livro/:id', (request, reply) => {
+
+    const livroId = request.params.id
+    const {titulo, autor, npaginas} = request.body
+    const livro = database.update(livroId, {
+        titulo,
+        autor,
+        npaginas,
+    })
+    return reply.status(204).send()
+})
+
+server.delete('/livro/:id', (request, reply) => {
+    const livroId = request.params.id
+
+    database.delete(livroId)
+
+    return reply.status(204).send()
 })
 
 server.listen({
